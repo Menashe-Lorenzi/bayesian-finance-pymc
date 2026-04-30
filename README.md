@@ -3,10 +3,10 @@
 Bayesian financial modeling and time-series analysis with [PyMC](https://www.pymc.io/),
 focused on asset returns, volatility estimation, and predictive inference.
 
-The project walks through a complete workflow:
-a frequentist baseline (OLS), a single-level Bayesian model, and a
-hierarchical Bayesian model with sector-level priors, including diagnostics
-and posterior predictive checks.
+The project walks through a focused, end-to-end workflow: an OLS baseline,
+three Bayesian models of increasing structure, sampler-geometry diagnostics
+(centered → non-centered reparameterization), and a posterior-predictive
+price-path simulation.
 
 ## Project overview
 
@@ -16,18 +16,25 @@ under test is that **volatility is structured by sector**, so a hierarchical
 model with sector-level priors should describe returns better than a flat,
 pooled model.
 
-Approaches covered:
+Sections in the notebook:
 
-1. **Frequentist baseline** — OLS regression on average and per-stock prices,
-   with residual diagnostics (Durbin-Watson, Jarque-Bera, etc.).
-2. **Single-level Bayesian model** — Student-t likelihood with weakly-informative
-   priors (`mu ~ Normal`, `sigma ~ HalfNormal`, `nu ~ Gamma`).
-3. **Hierarchical Bayesian model** — sector-level priors on volatility, plus
-   stock-specific intercept and time-slope drawn from group-level distributions.
-4. **Sampler diagnostics** — trace plots, autocorrelation, ESS evolution, pair
-   plots, and a discussion of MCMC vs. HMC/NUTS behaviour.
-5. **Posterior predictive** — variance and volatility per predicted return,
-   simulated price paths, and 2-sigma bands.
+1. **Setup & Data** — load tickers, fetch prices, compute log-returns.
+2. **Frequentist baseline** — OLS regression on average and per-stock prices,
+   with residual diagnostics (Durbin–Watson, Jarque–Bera, etc.).
+3. **Bayesian Model — Sector-Grouped Volatility** — Student-t likelihood
+   with sector-level `HalfCauchy` priors on `sigma`.
+4. **Bayesian Regression in Time** — single-level Student-t regression of
+   the average return on time; sets up the posterior-predictive machinery.
+5. **Hierarchical Bayesian Model** — per-stock intercept and time-slope
+   drawn from group-level priors. Fit first in centered form, then
+   reparameterized to non-centered to fix the funnel-shaped posterior
+   geometry that NUTS struggles with.
+6. **Posterior Predictive — Price Simulation** — variance and volatility
+   per predicted return, reconstructed price paths, and 2σ bands.
+
+Long, repetitive code blocks (data loading, EDA, OLS plotting, regression
+intervals, price simulation) live in `utils.py` so the notebook stays
+narrative-first.
 
 ## Data
 
@@ -52,6 +59,7 @@ Returns are computed as `log(1 + pct_change)` and scaled by 100.
 ```
 .
 ├── financial_analysis_with_pymc.ipynb   # main notebook
+├── utils.py                             # extracted helpers used by the notebook
 ├── archive/                             # snapshot of the original notebook
 ├── requirements.txt                     # pinned environment
 ├── LICENSE                              # MIT
