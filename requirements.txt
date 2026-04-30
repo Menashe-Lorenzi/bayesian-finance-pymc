@@ -54,9 +54,9 @@ ptyprocess==0.7.0
 pure_eval==0.2.3
 pycparser==2.23
 Pygments==2.19.2
-pymc==5.26.1
+pymc==5.23.0
 pyparsing==3.2.5
-pytensor==2.35.1
+pytensor==2.31.7
 python-dateutil==2.9.0.post0
 pytz==2025.2
 pyzmq==27.1.0
